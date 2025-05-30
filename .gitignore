@@ -1,0 +1,6 @@
+# Node modules (Netlify Functions 포함)
+node_modules/
+
+# 로컬 에디터, OS 파일
+.DS_Store
+Thumbs.db
