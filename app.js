@@ -1,11 +1,10 @@
-// 1) GitHub Raw에서 최신 CSV 불러오기
+// 1) 최신 CSV 불러오기
 async function loadAndParseCSV() {
-  const url = 'https://raw.githubusercontent.com/ansehddls/coating-app/main/data.csv';
-  const res = await fetch(url, {
+  const res = await fetch('data.csv', {
     cache: 'no-store',
     headers: {
       'Cache-Control': 'no-cache',
-      Pragma: 'no-cache'
+      'Pragma': 'no-cache'
     }
   });
   if (!res.ok) throw new Error(`CSV 로드 실패: ${res.status}`);
@@ -30,34 +29,37 @@ function renderTable(items) {
   `).join('');
 }
 
-// 3) 도면 토글: 로컬 UI + 서버에 커밋
+// 3) 도면 토글 (UI + 서버로 커밋 요청)
 async function toggle(idx) {
   const has = !!items[idx]['도면']?.trim();
   if (!confirm(has ? '도면이 없습니까?' : '도면이 있습니까?')) return;
 
+  // UI 반영
   items[idx]['도면'] = has ? '' : '○';
   renderTable(items);
 
+  // 서버리스 함수 호출 (GitHub CSV 커밋)
   const res = await fetch('/.netlify/functions/update-csv', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ index: idx, drawing: items[idx]['도면'] })
   });
+
   if (!res.ok) {
     alert(`저장 실패: ${await res.text()}`);
+    // 실패 시 UI 복구
     items[idx]['도면'] = has ? '○' : '';
     renderTable(items);
   }
 }
 
-// 4) 검색 기능
-document.getElementById('search')
-  .addEventListener('input', e => {
-    const q = e.target.value.trim();
-    renderTable(q ? items.filter(r => r['부번'].includes(q)) : items);
-  });
+// 4) 검색
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.trim();
+  renderTable(q ? items.filter(r => r['부번'].includes(q)) : items);
+});
 
-// 5) 초기 로드
+// 5) 초기화
 let items = [];
 (async () => {
   items = await loadAndParseCSV();
