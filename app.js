@@ -1,3 +1,27 @@
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations()
+    .then(regs => {
+      for (const reg of regs) {
+        reg.unregister();
+        console.log('Unregistered SW:', reg);
+      }
+    })
+    .then(() => caches.keys())
+    .then(keys => {
+      for (const key of keys) {
+        caches.delete(key);
+        console.log('Deleted cache:', key);
+      }
+    });
+}
+
+
+
+
+
+
+
+
 // 1) CSV 로딩 & 파싱 (cache: no-store)
 async function loadAndParseCSV(url) {
   const res = await fetch(url, { cache: 'no-store' });
