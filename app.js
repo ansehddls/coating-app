@@ -36,24 +36,26 @@ async function toggle(idx) {
   const msg = has ? '도면이 없습니까?' : '도면이 있습니까?';
   if (!confirm(msg)) return;
 
-  // 1) UI만 토글
+  // 1) UI만 토글(로컬 상태 변경)
   items[idx]['도면'] = has ? '' : '○';
   renderTable(items);
 
-  // 2) 서버리스 호출
+  // 2) 서버리스 호출 (CSV 커밋)
   const res = await fetch('/.netlify/functions/update-csv', {
     method:  'POST',
-    headers: { 'Content-Type':'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify({ index: idx, drawing: items[idx]['도면'] })
   });
   if (!res.ok) {
     alert(`저장 실패: ${await res.text()}`);
-    // 실패 시 UI 원복
+    // 실패 시 원복
     items[idx]['도면'] = has ? '○' : '';
     renderTable(items);
   }
-  // — 여기서 loadCSV() 호출 제거 —
+
+  // ★★★ 리로드( loadCSV() ) 호출을 **제거** 합니다 ★★★
 }
+
 
 
 // 4) 검색 기능
