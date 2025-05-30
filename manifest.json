@@ -1,0 +1,8 @@
+{
+  "name": "코팅 사양 앱",
+  "short_name": "코팅앱",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2"
+}
