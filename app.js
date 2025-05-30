@@ -29,29 +29,38 @@ function renderTable(items) {
 }
 
 // 3) 도면 토글 (UI만 변경, 서버는 백그라운드로)
+// app.js 에서 toggle()만 이걸로 교체하세요
+
 async function toggle(idx) {
   const has = !!items[idx]['도면']?.trim();
   const msg = has ? '도면이 없습니까?' : '도면이 있습니까?';
   if (!confirm(msg)) return;
 
-  // 1) 로컬 상태만 토글
+  // 1) UI만 토글 (로컬 상태 반영)
   items[idx]['도면'] = has ? '' : '○';
   renderTable(items);
 
-  // 2) 백그라운드에서 서버리스 호출
+  // 2) 백그라운드에서 CSV 커밋 요청
   const res = await fetch('/.netlify/functions/update-csv', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ index: idx, drawing: items[idx]['도면'] })
+    method:  'POST',
+    headers: { 'Content-Type':'application/json' },
+    body:    JSON.stringify({ index: idx, drawing: items[idx]['도면'] })
   });
   if (!res.ok) {
     alert(`저장 실패: ${await res.text()}`);
-    // 실패 시 UI 복구
+    // 실패 시 원복
     items[idx]['도면'] = has ? '○' : '';
     renderTable(items);
+    return;
   }
-  // ※ loadCSV()/renderTable() 호출 제거
+
+  // 3) 커밋이 끝나면 잠깐 대기 → 최신 CSV 다시 로드
+  setTimeout(async () => {
+    items = await loadAndParseCSV('data.csv');
+    renderTable(items);
+  }, 1000);  // 1초 기다리세요 (네트워크 상황에 따라 조정 가능)
 }
+
 
 // 4) 검색 기능
 document.getElementById('search')
