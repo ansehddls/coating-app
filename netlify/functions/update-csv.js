@@ -43,20 +43,20 @@ exports.handler = async (event) => {
   const newB64 = Buffer.from(newCsv, 'utf8').toString('base64');
 
   // 5) GitHub에 커밋
-  const res2 = await fetch(url, {
+    // 5) GitHub에 커밋
+  const res2 = await fetch(getUrl, {
     method: 'PUT',
-    headers: { Authorization: `token ${TOKEN}`, Accept: 'application/vnd.github.v3+json' },
-    body: JSON.stringify({
-      message: `Toggle drawing at row ${index+1}`,
-      content: newB64,
-      sha,
-      branch: BRANCH
-    })
+    headers: { Authorization:`token ${TOKEN}`, Accept:'application/vnd.github.v3+json' },
+    body: JSON.stringify({ message:`Toggle drawing at row ${index+1}`, content:newB64, sha, branch:BRANCH })
   });
   if (!res2.ok) {
     const err = await res2.text();
     return { statusCode: res2.status, body: err };
   }
 
-  return { statusCode: 200, body: 'OK' };
-};
+  // 커밋이 성공하면, 방금 만든 newCsvText를 리턴
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ csv: newCsvText })
+  };
+}
