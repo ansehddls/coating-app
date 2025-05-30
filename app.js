@@ -29,29 +29,38 @@ function renderTable(items) {
 }
 
 // 3) 도면 토글 (UI 유지, 서버에만 커밋 요청)
+// app.js 에서 toggle 함수만 교체
+
 async function toggle(idx) {
   const has = !!items[idx]['도면']?.trim();
   const msg = has ? '도면이 없습니까?' : '도면이 있습니까?';
   if (!confirm(msg)) return;
 
-  // 1) 로컬 UI만 토글
+  // 1) UI(셀)만 즉시 토글
   items[idx]['도면'] = has ? '' : '○';
-  renderTable(items);
+  // 해당 행의 8번째 <td> 셀(도면 칼럼)만 업데이트
+  const rowEl = document.querySelectorAll('#data-table tbody tr')[idx];
+  rowEl.children[7].textContent = items[idx]['도면'];
 
-  // 2) 백그라운드에서 CSV 커밋 요청
-  const res = await fetch('/.netlify/functions/update-csv', {
-    method: 'POST',
+  // 2) 백그라운드로 서버리스 호출 (UI는 기다리지 않음)
+  fetch('/.netlify/functions/update-csv', {
+    method:  'POST',
     headers: { 'Content-Type':'application/json' },
-    body: JSON.stringify({ index: idx, drawing: items[idx]['도면'] })
-  });
-  if (!res.ok) {
-    alert(`저장 실패: ${await res.text()}`);
-    // 실패 시 UI 복구
+    body:    JSON.stringify({ index: idx, drawing: items[idx]['도면'] })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error(`저장 실패: ${res.statusText}`);
+    // (선택) 성공 토스트 띄우기
+    console.log('도면 상태가 서버에 반영되었습니다.');
+  })
+  .catch(async err => {
+    alert(err.message);
+    // 실패하면 UI 원복
     items[idx]['도면'] = has ? '○' : '';
-    renderTable(items);
-  }
-  // **여기서 절대 loadCSV()/renderTable() 호출하지 않습니다.**
+    rowEl.children[7].textContent = items[idx]['도면'];
+  });
 }
+
 
 // 4) 검색 기능
 document.getElementById('search')
