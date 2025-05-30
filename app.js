@@ -1,13 +1,12 @@
 
 // 1) CSV 로딩 & 파싱 (cache: no-store)
-async function loadAndParseCSV(url) {
-  const res = await fetch(url, {
-    cache: 'no-store',           // 절대 캐시 안 씀
-    headers: {
-      'Cache-Control': 'no-cache',
-      Pragma: 'no-cache'
-    }
-  });
+// app.js
+
+// 1) CSV 로딩 & 파싱 (GitHub Raw URL 사용)
+async function loadAndParseCSV() {
+  // 여기에 본인 repo의 raw.githubusercontent.com URL을 넣으세요
+  const url = 'https://raw.githubusercontent.com/ansehddls/coating-app/main/data.csv';
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`CSV load failed: ${res.status}`);
   const text = await res.text();
   return Papa.parse(text, { header: true, skipEmptyLines: true }).data;
