@@ -1,37 +1,16 @@
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations()
-    .then(regs => {
-      for (const reg of regs) {
-        reg.unregister();
-        console.log('Unregistered SW:', reg);
-      }
-    })
-    .then(() => caches.keys())
-    .then(keys => {
-      for (const key of keys) {
-        caches.delete(key);
-        console.log('Deleted cache:', key);
-      }
-    });
-}
-
-
-
-
-
-
-
 
 // 1) CSV 로딩 & 파싱 (cache: no-store)
 async function loadAndParseCSV(url) {
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) throw new Error(`CSV 로드 실패: ${res.status}`);
-  const text = await res.text();
-  const parsed = Papa.parse(text, {
-    header: true,
-    skipEmptyLines: true
+  const res = await fetch(url, {
+    cache: 'no-store',           // 절대 캐시 안 씀
+    headers: {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache'
+    }
   });
-  return parsed.data;
+  if (!res.ok) throw new Error(`CSV load failed: ${res.status}`);
+  const text = await res.text();
+  return Papa.parse(text, { header: true, skipEmptyLines: true }).data;
 }
 
 // 2) 테이블 렌더링
