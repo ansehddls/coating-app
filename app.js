@@ -36,11 +36,11 @@ async function toggle(idx) {
   const msg = has ? '도면이 없습니까?' : '도면이 있습니까?';
   if (!confirm(msg)) return;
 
-  // 3-1) 우선 UI만 토글
+  // 1) UI만 토글
   items[idx]['도면'] = has ? '' : '○';
   renderTable(items);
 
-  // 3-2) 서버리스 호출
+  // 2) 서버리스 호출
   const res = await fetch('/.netlify/functions/update-csv', {
     method:  'POST',
     headers: { 'Content-Type':'application/json' },
@@ -48,13 +48,13 @@ async function toggle(idx) {
   });
   if (!res.ok) {
     alert(`저장 실패: ${await res.text()}`);
-    return;
+    // 실패 시 UI 원복
+    items[idx]['도면'] = has ? '○' : '';
+    renderTable(items);
   }
-
-  // 3-3) 변경된 CSV 다시 불러와서 완전히 리프레시
-  items = await loadCSV();
-  renderTable(items);
+  // — 여기서 loadCSV() 호출 제거 —
 }
+
 
 // 4) 검색 기능
 document.getElementById('search').addEventListener('input', e => {
