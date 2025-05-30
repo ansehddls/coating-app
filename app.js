@@ -3,14 +3,31 @@
 // app.js
 
 // 1) CSV 로딩 & 파싱 (GitHub Raw URL 사용)
+// app.js
+
+// 1) CSV 로딩 & 파싱
 async function loadAndParseCSV() {
-  // 여기에 본인 repo의 raw.githubusercontent.com URL을 넣으세요
+  // GitHub Raw URL: coating-app 리포 main 브랜치의 data.csv
   const url = 'https://raw.githubusercontent.com/ansehddls/coating-app/main/data.csv';
+
+  // cache: 'no-store' 로 SW/브라우저 캐시 완전 우회
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`CSV load failed: ${res.status}`);
   const text = await res.text();
   return Papa.parse(text, { header: true, skipEmptyLines: true }).data;
 }
+
+// 이하 기존 renderTable, toggle, 검색, 초기화 로직 그대로
+function renderTable(items) { /* ... */ }
+async function toggle(idx) { /* ... */ }
+document.getElementById('search').addEventListener('input', /* ... */);
+
+let items = [];
+(async () => {
+  items = await loadAndParseCSV();
+  renderTable(items);
+})();
+
 
 // 2) 테이블 렌더링
 function renderTable(items) {
@@ -59,9 +76,3 @@ document.getElementById('search').addEventListener('input', e => {
   renderTable(q ? items.filter(r=>r['부번'].includes(q)) : items);
 });
 
-// 5) 초기화
-let items = [];
-(async () => {
-  items = await loadAndParseCSV('data.csv');
-  renderTable(items);
-})();
