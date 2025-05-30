@@ -85,7 +85,15 @@ tbody tr:nth-child(even) {
   }
 
   th, td {
-    font-size: 0.68rem;
-    padding: 0.4rem 0.2rem;
-  }
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  line-height: 1.2;
+  font-size: 0.75rem;
+  height: 2.4em;
+  padding: 0.4rem 0.2rem;
+}
 }
