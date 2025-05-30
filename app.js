@@ -29,7 +29,7 @@ function renderTable(items) {
 }
 
 // 3) 도면 토글 (UI만 변경, 서버는 백그라운드로)
-a// app.js 에서 toggle()만 이걸로 교체하세요
+// app.js 에서 toggle()만 이걸로 교체하세요
 
 async function toggle(idx) {
   const has = !!items[idx]['도면']?.trim();
