@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>치수 확인인 앱</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>KPF</h1>
-    <input id="search" type="search" placeholder="🔍 부번 검색">
-  </header>
-  <main>
-    <table id="data-table">
-      <thead>
-        <tr>
-          <th>순번</th>
-          <th>부번</th>
-          <th>품명</th>
-          <th>규격</th>
-          <th>코팅사양</th>
-          <th>코팅폭</th>
-          <th>코팅미도포구간</th>
-          <th>도면</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </main>
-
-  <!-- PapaParse 추가 -->
-   <meta name="mobile-web-app-capable" content="yes" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="코팅 사양" />
   <meta name="theme-color" content="#007acc" />
   <link rel="manifest" href="manifest.json" />
+  <title>치수 확인 앱</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>KPF</h1>
+    <input id="search" type="search" placeholder="🔍 부번 검색" />
+  </header>
 
+  <main>
+    <div class="table-wrapper">
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th>순번</th>
+            <th>부번</th>
+            <th>품명</th>
+            <th>규격</th>
+            <th>코팅사양</th>
+            <th>코팅폭</th>
+            <th>코팅미도포구간</th>
+            <th>도면</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>

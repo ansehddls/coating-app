@@ -1,4 +1,4 @@
-/* 기본 스타일 초기화 */
+/* 기본 초기화 */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -11,7 +11,7 @@ body {
   color: #333;
 }
 
-/* 헤더 영역 */
+/* 헤더 */
 header {
   display: flex;
   align-items: center;
@@ -37,16 +37,20 @@ header h1 {
   min-width: 180px;
 }
 
-/* 메인 컨텐츠 */
+/* 메인 */
 main {
   padding: 1rem;
+}
+
+/* 테이블 래퍼 - 가로 스크롤 처리 */
+.table-wrapper {
   overflow-x: auto;
 }
 
-/* 테이블 스타일 */
+/* 테이블 */
 table {
+  min-width: 700px;
   width: 100%;
-  min-width: 600px; /* 모바일에서 스크롤 가능하게 */
   border-collapse: collapse;
   background: #fff;
   border-radius: 4px;
