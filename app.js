@@ -49,13 +49,24 @@ function renderTable(list) {
 }
 
 // 4) 도면 토글 (변경 없음)
-function toggleDrawing(idx) {
+// 토글 함수만 변경
+async function toggleDrawing(idx) {
   const has = items[idx].drawing === '○';
   const msg = has ? '도면이 없습니까?' : '도면이 있습니까?';
   if (!confirm(msg)) return;
+  // 화면 토글
   items[idx].drawing = has ? '' : '○';
   renderTable(items);
+
+  // 서버리스 함수 호출
+  const res = await fetch('/.netlify/functions/update-csv', {
+    method: 'POST',
+    body: JSON.stringify({ index: idx, drawing: items[idx].drawing }),
+    headers: { 'Content-Type': 'application/json' }
+  });
+  if (!res.ok) alert(`저장 실패: ${await res.text()}`);
 }
+
 
 // 5) 검색 기능 (변경 없음)
 document.getElementById('search')
