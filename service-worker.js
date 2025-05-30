@@ -1,42 +1,36 @@
 // service-worker.js
 
-const CACHE_NAME = 'coating-app-cache-v2'; // ← v1 → v2로 변경
+const CACHE_NAME = 'coating-app-cache-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/style.css',
   '/app.js',
-  // data.csv 제외
+  // data.csv, update-csv 는 캐싱하지 않습니다
 ];
 
 self.addEventListener('install', evt => {
-  // 새 SW가 설치되면 바로 활성화
   self.skipWaiting();
   evt.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
   );
 });
 
 self.addEventListener('activate', evt => {
-  // 기존 캐시 전부 제거
   evt.waitUntil(
     caches.keys().then(names =>
-      Promise.all(
-        names.filter(name => name !== CACHE_NAME)
-             .map(name => caches.delete(name))
+      Promise.all(names
+        .filter(n => n !== CACHE_NAME)
+        .map(n => caches.delete(n))
       )
-    ).then(() => {
-      // 새 SW가 페이지 컨트롤 즉시 시작하도록
-      return self.clients.claim();
-    })
+    ).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', evt => {
   const url = new URL(evt.request.url);
 
-  // data.csv 요청은 network-first
+  // 1) data.csv 요청은 network-first
   if (url.pathname.endsWith('/data.csv')) {
     evt.respondWith(
       fetch(evt.request).catch(() => caches.match(evt.request))
@@ -44,7 +38,15 @@ self.addEventListener('fetch', evt => {
     return;
   }
 
-  // 그 외는 cache-first
+  // 2) Netlify Function 호출(/.netlify/functions/) 도 network-first
+  if (url.pathname.startsWith('/.netlify/functions/')) {
+    evt.respondWith(
+      fetch(evt.request).catch(() => caches.match(evt.request))
+    );
+    return;
+  }
+
+  // 3) 그 외 정적 에셋은 cache-first
   evt.respondWith(
     caches.match(evt.request)
       .then(cached => cached || fetch(evt.request))
