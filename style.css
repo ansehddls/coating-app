@@ -85,16 +85,11 @@ tbody tr:nth-child(even) {
   }
 
   th, td {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;        /* 2줄까지만 표시 */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
   font-size: 0.75rem;
-  line-height: 1.2;
-  height: 2.4em;                 /* 정확히 2줄 높이 고정 */
-  padding: 0.4rem 0.2rem;
-  vertical-align: top;
-}
+  line-height: 1.4;
+  padding: 0.3rem 0.2rem;
+  vertical-align: middle;
+  word-break: break-word;
+  white-space: normal;
+  }
 }
